@@ -52,6 +52,13 @@ public class UserController {
         return new ResponseEntity<UserDTO>(modelMapper.map(user, UserDTO.class), HttpStatus.OK);
     }
 
+    @GetMapping("/all")
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        List<UserDTO> users = userService.getAllUsers();
+
+        return new ResponseEntity<List<UserDTO>>(users, HttpStatus.OK);
+    }
+
     @GetMapping("/tasks")
     public ResponseEntity<List<TaskDTO>> getTasks() throws TaskException {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

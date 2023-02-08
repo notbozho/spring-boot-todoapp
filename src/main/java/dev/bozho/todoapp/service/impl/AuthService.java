@@ -40,6 +40,8 @@ public class AuthService implements IAuthService {
         user.setPassword(encodedPassword);
         user.setRole(UserRole.ROLE_USER);
 
+        userRepository.save(user);
+
         return jwtService.generateToken(user);
     }
 

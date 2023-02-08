@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
@@ -28,34 +27,19 @@ public class UserService implements IUserService {
     private ModelMapper modelMapper;
 
     @Override
-    public UserDTO register(User user) throws UserException {
-        Optional<User> userOptional = userRepository.findUserByEmail(user.getEmail());
-
-        if (userOptional.isPresent()) {
-            throw new UserException("User already exists");
-        }
-
-        User registeredUser = userRepository.save(user);
-
-        return modelMapper.map(registeredUser, UserDTO.class);
-    }
-
-    @Override
-    public UserDTO login(User user) {
-        throw new NotYetImplementedException();
-    }
-
-    @Override
     public UserDTO getUser(String email) throws UserException {
-        Optional<User> userOptional = userRepository.findUserByEmail(email);
-
-        if (!userOptional.isPresent()) {
-            throw new UserException("User does not exist");
-        }
-
-        User user = userOptional.get();
+        User user = userRepository.findUserByEmail(email)
+                                  .orElseThrow(() -> new UserException("User not found"));
 
         return modelMapper.map(user, UserDTO.class);
+    }
+
+    @Override
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll()
+                             .stream()
+                             .map(user -> modelMapper.map(user, UserDTO.class))
+                             .toList();
     }
 
     @Override

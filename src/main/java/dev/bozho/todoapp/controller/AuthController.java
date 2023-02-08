@@ -23,8 +23,6 @@ public class AuthController {
     public ResponseEntity<String> register(@Valid @RequestBody CredentialsDTO user) throws UserException {
         String token = authService.register(user);
 
-        System.out.println(token);
-
         return new ResponseEntity<String>(token, HttpStatus.OK);
     }
 

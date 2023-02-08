@@ -9,11 +9,9 @@ import java.util.List;
 
 public interface IUserService {
 
-    UserDTO register(User user) throws UserException;
-
-    UserDTO login(User user);
-
     UserDTO getUser(String email) throws UserException;
+
+    List<UserDTO> getAllUsers();
 
     UserDTO updateUser(User user);
 

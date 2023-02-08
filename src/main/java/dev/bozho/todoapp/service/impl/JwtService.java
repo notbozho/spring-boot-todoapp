@@ -54,7 +54,7 @@ public class JwtService implements IJwtService {
                 .setClaims(claims)
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 15))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 15))
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }

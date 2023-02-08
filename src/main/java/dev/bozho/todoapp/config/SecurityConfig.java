@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 // improve here using AppConstants
                 .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("/api/v1/admin/**").hasAnyAuthority("ROLE_ADMIN")
+                .requestMatchers("/api/v1/admin/**", "/api/v1/user/all").hasAnyAuthority("ROLE_ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
