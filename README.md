@@ -1,7 +1,6 @@
 # Todo App with Authentication
 Basic Todo App backend made with Spring Boot 3.0 and MySQL.
 
----
 
 ## Features
  * User registration and login with JWT Authenticaiton.
