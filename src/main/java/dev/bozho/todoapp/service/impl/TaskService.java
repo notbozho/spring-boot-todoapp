@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class TaskService implements ITaskService {
 
@@ -75,5 +77,16 @@ public class TaskService implements ITaskService {
         taskRepository.delete(task);
 
         return "Task with id " + taskId + " deleted successfully";
+    }
+
+    @Override
+    public List<TaskDTO> getAllTasks() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<TaskDTO> tasks = user.getTasks().stream()
+                                  .map(task -> modelMapper.map(task, TaskDTO.class))
+                                  .toList();
+
+        return tasks;
     }
 }

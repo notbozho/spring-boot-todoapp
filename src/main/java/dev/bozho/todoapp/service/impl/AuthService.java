@@ -1,32 +1,43 @@
 package dev.bozho.todoapp.service.impl;
 
+import dev.bozho.todoapp.exception.TokenException;
 import dev.bozho.todoapp.exception.UserException;
 import dev.bozho.todoapp.model.User;
 import dev.bozho.todoapp.model.UserRole;
 import dev.bozho.todoapp.payload.CredentialsDTO;
 import dev.bozho.todoapp.repository.UserRepository;
 import dev.bozho.todoapp.service.IAuthService;
-import org.springframework.beans.factory.annotation.Autowired;
+import dev.bozho.todoapp.util.EmailValidator;
+import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class AuthService implements IAuthService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    @Autowired
-    private JwtService jwtService;
+    private final JwtService jwtService;
 
+    private final EmailValidator emailValidator;
+
+    private final EmailTokenService emailTokenService;
+
+    private final EmailService emailService;
 
     @Override
-    public String register(CredentialsDTO credentials) throws UserException {
+    public String register(CredentialsDTO credentials) throws UserException, TokenException {
+        boolean isEmailValid = emailValidator.test(credentials.getEmail());
+
+        if (!isEmailValid) {
+            throw new UserException("Email " + credentials.getEmail() + " is not valid");
+        }
+
         Optional<User> opt = userRepository.findUserByEmail(credentials.getEmail());
 
         if (opt.isPresent()) {
@@ -42,13 +53,20 @@ public class AuthService implements IAuthService {
 
         userRepository.save(user);
 
+        String token = emailTokenService.generateToken(user);
+
+        emailService.send(
+                credentials.getEmail(),
+                emailService.buildVerificationEmail(token)
+        );
+
         return jwtService.generateToken(user);
     }
 
     @Override
     public String authenticate(CredentialsDTO credentials) throws UserException {
         User user = userRepository.findUserByEmail(credentials.getEmail())
-                .orElseThrow(() -> new UserException("User with email " + credentials.getEmail() + " does not exist"));
+                                  .orElseThrow(() -> new UserException("User with email " + credentials.getEmail() + " does not exist"));
 
         if (!passwordEncoder.matches(credentials.getPassword(), user.getPassword())) {
             throw new UserException("Invalid password");

@@ -1,6 +1,8 @@
 # Todo App with Authentication
 Basic Todo App backend made with Spring Boot 3.0 and MySQL.
 
+---
+
 ## Features
  * User registration and login with JWT Authenticaiton.
  * Password encryption with BCrypt.
@@ -15,12 +17,18 @@ Basic Todo App backend made with Spring Boot 3.0 and MySQL.
 * MySQL
 
 ## Routes
-* POST /api/auth/signup - Register a new user
-* POST /api/auth/signin - Login a user
+* POST /api/auth/register - Register a new user (returns JWT token)
+* POST /api/auth/login - Login a user (returns JWT token)
 
 ## Todo
  * Unit Testing
- * Email Verification for registration
+ * ~~Email Verification for registration~~
+ * Use template engine for email templates instead of hard coded html strings (https://www.thymeleaf.org/)
+ * Documentation with Swagger and Javadoc
+ * Dockerize the application
+ * Default /error route for error handling
+ * Rate limiting
+    * Email confirmation rate limiting per user
 
 ## Getting Started
 To get started with this project, you will need to have the following installed on your local machine:
@@ -39,3 +47,6 @@ To build and run the project, follow these steps:
 * Run the project: mvn spring-boot:run
 
 The application will be available at http://localhost:8080.
+
+---
+Made with 💖 by @notBozho

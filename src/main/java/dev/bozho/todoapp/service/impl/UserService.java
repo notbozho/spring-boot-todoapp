@@ -1,5 +1,6 @@
 package dev.bozho.todoapp.service.impl;
 
+import dev.bozho.todoapp.exception.TokenException;
 import dev.bozho.todoapp.exception.UserException;
 import dev.bozho.todoapp.model.User;
 import dev.bozho.todoapp.payload.TaskDTO;
@@ -7,23 +8,26 @@ import dev.bozho.todoapp.payload.UserDTO;
 import dev.bozho.todoapp.repository.TaskRepository;
 import dev.bozho.todoapp.repository.UserRepository;
 import dev.bozho.todoapp.service.IUserService;
+import lombok.AllArgsConstructor;
 import org.hibernate.cfg.NotYetImplementedException;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class UserService implements IUserService {
 
-    @Autowired
     private UserRepository userRepository;
 
-    @Autowired
     private TaskRepository taskRepository;
 
-    @Autowired
+    private final EmailTokenService emailTokenService;
+
+    private final EmailService emailService;
+
     private ModelMapper modelMapper;
 
     @Override
@@ -35,11 +39,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll()
-                             .stream()
-                             .map(user -> modelMapper.map(user, UserDTO.class))
-                             .toList();
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 
     @Override
@@ -54,6 +55,22 @@ public class UserService implements IUserService {
 
     @Override
     public List<TaskDTO> getTasks(String email) {
-        return null;
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<TaskDTO> tasks = user.getTasks().stream()
+                                  .map(task -> modelMapper.map(task, TaskDTO.class))
+                                  .toList();
+
+        return tasks;
+    }
+
+    @Override
+    public void resendConfirmationEmail(User user) throws TokenException {
+        String token = emailTokenService.generateToken(user);
+
+        emailService.send(
+                user.getEmail(),
+                emailService.buildVerificationEmail(token)
+        );
     }
 }
