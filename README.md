@@ -22,7 +22,9 @@ Basic Todo App backend made with Spring Boot 3.0 and MySQL.
 ## Todo
  * Unit Testing
  * ~~Email Verification for registration~~
- * Use template engine for email templates instead of hard coded html strings (https://www.thymeleaf.org/)
+ * Password reset route
+ * ~~Use template engine for email templates instead of hard coded html strings~~
+ * i18n localization
  * Documentation with Swagger and Javadoc
  * Dockerize the application
  * Default /error route for error handling
@@ -48,4 +50,4 @@ To build and run the project, follow these steps:
 The application will be available at http://localhost:8080.
 
 ---
-Made with 💖 by @notBozho
+Made with 💖 by **@notbozho**.

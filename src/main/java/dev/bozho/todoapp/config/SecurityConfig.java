@@ -1,7 +1,7 @@
 package dev.bozho.todoapp.config;
 
+import dev.bozho.todoapp.security.AuthoritiesConstants;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -16,28 +16,22 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    @Autowired
-    private AuthenticationProvider authenticationProvider;
+    private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                // improve here using AppConstants
-                .requestMatchers("/api/v1/auth/**").permitAll()
-                .requestMatchers("/api/v1/user/confirm").permitAll()
-                .requestMatchers("/api/v1/user/**").hasAnyAuthority("ROLE_USER")
-                .requestMatchers("/api/v1/admin/**").hasAnyAuthority("ROLE_ADMIN")
-                .requestMatchers("/api/v1/user/all").hasAnyAuthority("ROLE_ADMIN")
-                .anyRequest().authenticated()
+                    .requestMatchers("/api/v1/auth/**", "/api/v1/user/confirm").permitAll()
+                    .requestMatchers("/api/v1/admin/**").hasAnyAuthority(AuthoritiesConstants.ADMIN)
+//                    .anyRequest().authenticated()
                 .and()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .authenticationProvider(authenticationProvider)
+                    .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

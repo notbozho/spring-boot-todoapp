@@ -55,9 +55,9 @@ public class AuthService implements IAuthService {
 
         String token = emailTokenService.generateToken(user);
 
-        emailService.send(
+        emailService.sendEmailConfirmation(
                 credentials.getEmail(),
-                emailService.buildVerificationEmail(token)
+                token
         );
 
         return jwtService.generateToken(user);

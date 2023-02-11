@@ -8,6 +8,7 @@ import dev.bozho.todoapp.service.impl.TaskService;
 import dev.bozho.todoapp.service.impl.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.hibernate.cfg.NotYetImplementedException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -32,11 +33,19 @@ public class TaskController {
     @Autowired
     private ModelMapper modelMapper;
 
+    @PostMapping("/add")
+    public ResponseEntity<TaskDTO> addTask(@Valid @RequestBody TaskDTO task) throws TaskException {
+        TaskDTO createdTaskDTO =  taskService.addTask(task);
+
+        return new ResponseEntity<TaskDTO>(createdTaskDTO, HttpStatus.CREATED);
+    }
+
     @PutMapping("/")
     public ResponseEntity<TaskDTO> updateTask(@Valid @RequestBody TaskDTO task) throws TaskException {
-        TaskDTO updatedTaskDTO = taskService.updateTask(task.getTaskId(), task);
+//        TaskDTO updatedTaskDTO = taskService.updateTask(task.getTaskId(), task);
 
-        return new ResponseEntity<TaskDTO>(updatedTaskDTO, HttpStatus.CREATED);
+        throw new NotYetImplementedException();
+//        return new ResponseEntity<TaskDTO>(updatedTaskDTO, HttpStatus.CREATED);
     }
 
     @GetMapping("")

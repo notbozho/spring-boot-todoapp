@@ -2,8 +2,8 @@ package dev.bozho.todoapp.service;
 
 public interface IEmailService {
 
-    void send(String to, String email);
+    void send(String to, String subject, String content);
 
-    String buildVerificationEmail(String token);
+    void sendEmailConfirmation(String to, String token);
 
 }

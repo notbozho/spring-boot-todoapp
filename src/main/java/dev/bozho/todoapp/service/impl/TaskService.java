@@ -7,36 +7,29 @@ import dev.bozho.todoapp.payload.TaskDTO;
 import dev.bozho.todoapp.repository.TaskRepository;
 import dev.bozho.todoapp.repository.UserRepository;
 import dev.bozho.todoapp.service.ITaskService;
+import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@AllArgsConstructor
 public class TaskService implements ITaskService {
 
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Override
     public TaskDTO addTask(TaskDTO taskDTO) throws TaskException {
-
-        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        User user = userRepository.findUserByEmail(email).get();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Task task = modelMapper.map(taskDTO, Task.class);
-
         task.setUser(user);
-
         Task savedTask = taskRepository.save(task);
 
         return modelMapper.map(savedTask, TaskDTO.class);
@@ -48,7 +41,6 @@ public class TaskService implements ITaskService {
                                   .orElseThrow(() -> new TaskException("Task does not exist"));
 
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         if (!task.getUser().getEmail().equals(email)) {
             throw new TaskException("You do not have any task with id " + taskId + " to update");
         }
@@ -69,7 +61,6 @@ public class TaskService implements ITaskService {
                 .orElseThrow(() -> new TaskException("Task does not exist"));
 
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         if (!task.getUser().getEmail().equals(email)) {
             throw new TaskException("You do not have any task with id " + taskId + " to delete");
         }

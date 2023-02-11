@@ -68,9 +68,9 @@ public class UserService implements IUserService {
     public void resendConfirmationEmail(User user) throws TokenException {
         String token = emailTokenService.generateToken(user);
 
-        emailService.send(
+        emailService.sendEmailConfirmation(
                 user.getEmail(),
-                emailService.buildVerificationEmail(token)
+                token
         );
     }
 }
