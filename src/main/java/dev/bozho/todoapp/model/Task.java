@@ -19,7 +19,6 @@ public class Task {
 
     private String title;
     private String description;
-
     @ColumnDefault("false")
     private Boolean completed = false;
 

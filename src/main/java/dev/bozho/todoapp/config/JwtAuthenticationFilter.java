@@ -1,7 +1,7 @@
 package dev.bozho.todoapp.config;
 
 import dev.bozho.todoapp.model.User;
-import dev.bozho.todoapp.service.impl.JwtService;
+import dev.bozho.todoapp.service.tokens.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,7 +1,6 @@
-package dev.bozho.todoapp.service.impl;
+package dev.bozho.todoapp.service.tokens;
 
 import dev.bozho.todoapp.model.User;
-import dev.bozho.todoapp.service.IJwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;

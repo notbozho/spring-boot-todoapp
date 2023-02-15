@@ -1,17 +1,30 @@
 package dev.bozho.todoapp.service.impl;
 
+import dev.bozho.todoapp.exception.RefreshTokenException;
 import dev.bozho.todoapp.exception.TokenException;
 import dev.bozho.todoapp.exception.UserException;
+import dev.bozho.todoapp.model.RefreshToken;
 import dev.bozho.todoapp.model.User;
 import dev.bozho.todoapp.model.UserRole;
 import dev.bozho.todoapp.payload.CredentialsDTO;
+import dev.bozho.todoapp.payload.JwtResponse;
+import dev.bozho.todoapp.payload.RefreshTokenResponse;
 import dev.bozho.todoapp.repository.UserRepository;
 import dev.bozho.todoapp.service.IAuthService;
+import dev.bozho.todoapp.service.tokens.JwtService;
+import dev.bozho.todoapp.service.tokens.RefreshTokenService;
 import dev.bozho.todoapp.util.EmailValidator;
 import lombok.AllArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -24,9 +37,13 @@ public class AuthService implements IAuthService {
 
     private final JwtService jwtService;
 
+    private final RefreshTokenService refreshTokenService;
+
     private final EmailValidator emailValidator;
 
     private final EmailTokenService emailTokenService;
+
+    private final AuthenticationManager authenticationManager;
 
     private final EmailService emailService;
 
@@ -64,14 +81,55 @@ public class AuthService implements IAuthService {
     }
 
     @Override
-    public String authenticate(CredentialsDTO credentials) throws UserException {
-        User user = userRepository.findUserByEmail(credentials.getEmail())
-                                  .orElseThrow(() -> new UserException("User with email " + credentials.getEmail() + " does not exist"));
+    public ResponseEntity<?> authenticate(CredentialsDTO credentials) throws UserException {
 
-        if (!passwordEncoder.matches(credentials.getPassword(), user.getPassword())) {
-            throw new UserException("Invalid password");
-        }
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        credentials.getEmail(),
+                        credentials.getPassword()
+                )
+        );
 
-        return jwtService.generateToken(user);
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        User user = (User) authentication.getPrincipal();
+
+        String jwt = jwtService.generateToken(user);
+
+        List<String> roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId());
+
+        return ResponseEntity.ok().body(new JwtResponse(jwt, refreshToken.getToken(), user.getId(),
+                user.getEmail(), roles));
+
+//        User user = userRepository.findUserByEmail(credentials.getEmail())
+//                                  .orElseThrow(() -> new UserException("User with email " + credentials.getEmail() + " does not exist"));
+//
+//        if (!passwordEncoder.matches(credentials.getPassword(), user.getPassword())) {
+//            throw new UserException("Invalid password");
+//        }
+//
+//        return jwtService.generateToken(user);
+    }
+
+    @Override
+    public ResponseEntity<?> refreshToken(String token) {
+        return refreshTokenService.findByToken(token)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String jwt = jwtService.generateToken(user);
+                    return ResponseEntity.ok(new RefreshTokenResponse(jwt, token));
+                })
+                .orElseThrow(() -> new RefreshTokenException("Refresh token " + token + " does not exist"));
+    }
+
+    @Override
+    public ResponseEntity<?> logout(String token) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = user.getId();
+        refreshTokenService.deleteByUserId(userId);
+        return ResponseEntity.ok("Logged out successfully!");
     }
 }

@@ -1,4 +1,4 @@
-package dev.bozho.todoapp.service;
+package dev.bozho.todoapp.service.tokens;
 
 import dev.bozho.todoapp.model.User;
 import io.jsonwebtoken.Claims;
