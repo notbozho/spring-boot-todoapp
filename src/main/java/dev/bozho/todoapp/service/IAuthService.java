@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface IAuthService {
 
-    String register(CredentialsDTO credentials) throws UserException, TokenException;
+    ResponseEntity<?> register(CredentialsDTO credentials) throws UserException, TokenException;
 
     ResponseEntity<?> authenticate(CredentialsDTO credentials) throws UserException;
 

@@ -48,17 +48,17 @@ public class AuthService implements IAuthService {
     private final EmailService emailService;
 
     @Override
-    public String register(CredentialsDTO credentials) throws UserException, TokenException {
+    public ResponseEntity<?> register(CredentialsDTO credentials) throws UserException, TokenException {
         boolean isEmailValid = emailValidator.test(credentials.getEmail());
 
         if (!isEmailValid) {
-            throw new UserException("Email " + credentials.getEmail() + " is not valid");
+            return ResponseEntity.badRequest().body("Error: Email is not valid");
         }
 
         Optional<User> opt = userRepository.findUserByEmail(credentials.getEmail());
 
         if (opt.isPresent()) {
-            throw new UserException("User with email " + credentials.getEmail() + " already exists");
+            return ResponseEntity.badRequest().body("Error: Email is already taken");
         }
 
         User user = new User();
@@ -77,7 +77,7 @@ public class AuthService implements IAuthService {
                 token
         );
 
-        return jwtService.generateToken(user);
+        return ResponseEntity.ok().body("User registered successfully. Please check your email for confirmation.");
     }
 
     @Override

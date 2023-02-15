@@ -35,6 +35,7 @@ public class RefreshTokenService implements IRefreshTokenService {
 
         refreshToken.setUser(userRepository.findUserById(userId).get());
         refreshToken.setExpiryDate(Instant.now().plusMillis(refreshTokenDurationMs));
+        // TODO: Replace random UUID with a JWT Token
         refreshToken.setToken(UUID.randomUUID().toString());
 
         refreshToken = refreshTokenRepository.save(refreshToken);

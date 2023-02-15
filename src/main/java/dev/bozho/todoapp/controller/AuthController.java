@@ -6,7 +6,6 @@ import dev.bozho.todoapp.payload.CredentialsDTO;
 import dev.bozho.todoapp.service.impl.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,16 +20,18 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping(path = "register")
-    public ResponseEntity<String> register(@Valid @RequestBody CredentialsDTO user) throws UserException, TokenException {
-        String token = authService.register(user);
+    public ResponseEntity<?> register(@Valid @RequestBody CredentialsDTO user) throws UserException, TokenException {
 
-        return new ResponseEntity<String>(token, HttpStatus.OK);
+        return authService.register(user);
     }
 
     @PostMapping(path = "login")
-    public ResponseEntity<String> login(@Valid @RequestBody CredentialsDTO user) throws UserException {
-        String token = authService.authenticate(user);
+    public ResponseEntity<?> login(@Valid @RequestBody CredentialsDTO user) throws UserException {
+        return authService.authenticate(user);
+    }
 
-        return ResponseEntity.ok(token);
+    @PostMapping(path = "refresh")
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody String token) {
+        return authService.refreshToken(token);
     }
 }

@@ -6,6 +6,7 @@ Basic Todo App backend made with Spring Boot 3.0 and MySQL.
  * User registration and login with JWT Authenticaiton.
  * Password encryption with BCrypt.
  * Role based authorization with Spring Security.
+ * Refresh & Access Tokens
 
 ## Technologies
 * Spring Boot 3.0
@@ -16,8 +17,9 @@ Basic Todo App backend made with Spring Boot 3.0 and MySQL.
 * MySQL
 
 ## Routes
-* POST /api/auth/register - Register a new user (returns JWT token)
-* POST /api/auth/login - Login a user (returns JWT token)
+* POST /api/v1/auth/register - Register a new user
+* POST /api/v1/auth/login - Login a user
+* POST /api/v1/auth/refresh - Refresh Access token
 
 ## Todo
  * Unit Testing
