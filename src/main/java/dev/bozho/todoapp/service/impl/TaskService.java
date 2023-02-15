@@ -71,7 +71,7 @@ public class TaskService implements ITaskService {
     }
 
     @Override
-    public List<TaskDTO> getAllTasks() {
+    public List<TaskDTO> getAllTasksOfUser() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<TaskDTO> tasks = user.getTasks().stream()
@@ -79,5 +79,10 @@ public class TaskService implements ITaskService {
                                   .toList();
 
         return tasks;
+    }
+
+    @Override
+    public List<Task> getAllTasks() {
+        return taskRepository.findAll();
     }
 }

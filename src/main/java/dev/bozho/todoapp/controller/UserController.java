@@ -15,6 +15,7 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -43,17 +44,12 @@ public class UserController {
     }
 
     @GetMapping("")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<UserDTO> getUser() {
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal());
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return new ResponseEntity<UserDTO>(modelMapper.map(user, UserDTO.class), HttpStatus.OK);
-    }
-
-    @GetMapping(path = "all")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAllUsers();
-
-        return new ResponseEntity<List<User>>(users, HttpStatus.OK);
     }
 
     @GetMapping(path = "tasks")
@@ -73,6 +69,7 @@ public class UserController {
     }
 
     @GetMapping(path = "resendConfirmation")
+    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> resendConfirmation() throws TokenException {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
