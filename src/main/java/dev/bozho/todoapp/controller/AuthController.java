@@ -7,10 +7,7 @@ import dev.bozho.todoapp.service.impl.AuthService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api/v1/auth")
@@ -33,5 +30,15 @@ public class AuthController {
     @PostMapping(path = "refresh")
     public ResponseEntity<?> refreshToken(@Valid @RequestBody String token) {
         return authService.refreshToken(token);
+    }
+
+    @PostMapping(path = "resetPassword")
+    public ResponseEntity<String> resetPassword(@RequestParam("email") String email) {
+        return authService.resetPassword(email);
+    }
+
+    @PostMapping(path = "changePassword")
+    public ResponseEntity<String> changePassword(@RequestParam("token") String token, @RequestParam("password") String password) {
+        return authService.changePassword(token, password);
     }
 }

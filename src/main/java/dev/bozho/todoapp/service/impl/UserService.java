@@ -5,10 +5,10 @@ import dev.bozho.todoapp.exception.UserException;
 import dev.bozho.todoapp.model.User;
 import dev.bozho.todoapp.payload.TaskDTO;
 import dev.bozho.todoapp.payload.UserDTO;
-import dev.bozho.todoapp.repository.TaskRepository;
 import dev.bozho.todoapp.repository.UserRepository;
 import dev.bozho.todoapp.service.IUserService;
-import lombok.AllArgsConstructor;
+import dev.bozho.todoapp.service.tokens.EmailTokenService;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.cfg.NotYetImplementedException;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,18 +17,16 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService implements IUserService {
 
-    private UserRepository userRepository;
-
-    private TaskRepository taskRepository;
+    private final UserRepository userRepository;
 
     private final EmailTokenService emailTokenService;
 
     private final EmailService emailService;
 
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
     @Override
     public UserDTO getUser(String email) throws UserException {
@@ -54,7 +52,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<TaskDTO> getTasks(String email) {
+    public List<TaskDTO> getTasks() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<TaskDTO> tasks = user.getTasks().stream()

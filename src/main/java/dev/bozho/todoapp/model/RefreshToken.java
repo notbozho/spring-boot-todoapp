@@ -26,5 +26,5 @@ public class RefreshToken {
     private String token;
 
     @Column(nullable = false)
-    private Instant expiryDate;
+    private Instant expiry;
 }

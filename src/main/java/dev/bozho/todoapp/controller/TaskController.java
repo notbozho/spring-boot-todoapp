@@ -7,10 +7,9 @@ import dev.bozho.todoapp.repository.TaskRepository;
 import dev.bozho.todoapp.service.impl.TaskService;
 import dev.bozho.todoapp.service.impl.UserService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.hibernate.cfg.NotYetImplementedException;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,29 +17,25 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/task")
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class TaskController {
 
-    @Autowired
-    private TaskService taskService;
+    private final TaskService taskService;
     
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
-    @Autowired
-    private TaskRepository taskRepository;
+    private final TaskRepository taskRepository;
 
-    @Autowired
-    private ModelMapper modelMapper;
+    private final ModelMapper modelMapper;
 
-    @PostMapping("/add")
+    @PostMapping("add")
     public ResponseEntity<TaskDTO> addTask(@Valid @RequestBody TaskDTO task) throws TaskException {
         TaskDTO createdTaskDTO =  taskService.addTask(task);
 
         return new ResponseEntity<TaskDTO>(createdTaskDTO, HttpStatus.CREATED);
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     public ResponseEntity<TaskDTO> updateTask(@Valid @RequestBody TaskDTO task) throws TaskException {
 //        TaskDTO updatedTaskDTO = taskService.updateTask(task.getTaskId(), task);
 
@@ -48,8 +43,8 @@ public class TaskController {
 //        return new ResponseEntity<TaskDTO>(updatedTaskDTO, HttpStatus.CREATED);
     }
 
-    @GetMapping("")
-    public ResponseEntity<TaskDTO> getTask() {
+    @GetMapping("{taskId}")
+    public ResponseEntity<TaskDTO> getTask(@PathVariable Long taskId) throws TaskException {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         return new ResponseEntity<TaskDTO>(modelMapper.map(user, TaskDTO.class), HttpStatus.OK);

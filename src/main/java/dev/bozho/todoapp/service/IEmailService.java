@@ -6,4 +6,8 @@ public interface IEmailService {
 
     void sendEmailConfirmation(String to, String token);
 
+    void sendPasswordResetEmail(String to, String token);
+
+    void sendPasswordChangedEmail(String to);
+
 }

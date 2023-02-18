@@ -1,16 +1,15 @@
-package dev.bozho.todoapp.service.impl;
+package dev.bozho.todoapp.service.tokens;
 
 import dev.bozho.todoapp.exception.TokenException;
 import dev.bozho.todoapp.model.EmailToken;
 import dev.bozho.todoapp.model.User;
 import dev.bozho.todoapp.repository.EmailTokenRepository;
 import dev.bozho.todoapp.repository.UserRepository;
-import dev.bozho.todoapp.service.IEmailTokenService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -42,8 +41,8 @@ public class EmailTokenService implements IEmailTokenService {
 
         EmailToken emailToken = new EmailToken(
                 token,
-                LocalDateTime.now(),
-                LocalDateTime.now().plusMinutes(15),
+                Instant.now(),
+                Instant.now().plusSeconds(15 * 60),
                 user
         );
 
@@ -62,9 +61,9 @@ public class EmailTokenService implements IEmailTokenService {
             throw new IllegalStateException("Email is already confirmed");
         }
 
-        LocalDateTime expiredAt = emailToken.getExpiresAt();
+        Instant expiredAt = emailToken.getExpiresAt();
 
-        if (expiredAt.isBefore(LocalDateTime.now())) {
+        if (expiredAt.isBefore(Instant.now())) {
             throw new TokenException("Token expired");
         }
 
@@ -78,6 +77,6 @@ public class EmailTokenService implements IEmailTokenService {
     @Override
     public void setConfirmedAt(String token) {
         emailTokenRepository.updateConfirmedAt(
-                token, LocalDateTime.now());
+                token, Instant.now());
     }
 }

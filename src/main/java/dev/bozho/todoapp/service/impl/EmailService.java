@@ -54,6 +54,24 @@ public class EmailService implements IEmailService {
         this.send(to, "Please confirm your email", content);
     }
 
+    @Override
+    public void sendPasswordResetEmail(String to, String token) {
+        Map<String, Object> model = Map.of("token", token, "user", to.split("@")[0]);
+
+        String content = mergeTemplateIntoString("user.reset-password.ftl", model);
+
+        this.send(to, "Reset your password", content);
+    }
+
+    @Override
+    public void sendPasswordChangedEmail(String to) {
+        Map<String, Object> model = Map.of("user", to.split("@")[0]);
+
+        String content = mergeTemplateIntoString("user.password-changed.ftl", model);
+
+        this.send(to, "Your password has been changed!", content);
+    }
+
     private String mergeTemplateIntoString(String templateLocation, Map<String, Object> model) {
         try {
             Template template = freemarkerConfig.getTemplate(templateLocation);

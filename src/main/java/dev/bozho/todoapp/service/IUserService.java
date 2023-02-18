@@ -18,8 +18,7 @@ public interface IUserService {
 
     void deleteUser(String email);
 
-    List<TaskDTO> getTasks(String email);
+    List<TaskDTO> getTasks();
 
     void resendConfirmationEmail(User user) throws TokenException;
-
 }

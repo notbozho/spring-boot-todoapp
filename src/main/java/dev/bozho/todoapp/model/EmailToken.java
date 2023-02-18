@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Data
 @NoArgsConstructor
@@ -31,12 +31,12 @@ public class EmailToken {
     private String token;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt;
+    private Instant createdAt;
 
     @Column(nullable = false)
-    private LocalDateTime expiresAt;
+    private Instant expiresAt;
 
-    private LocalDateTime confirmedAt;
+    private Instant confirmedAt;
 
     @ManyToOne
     @JoinColumn(
@@ -45,7 +45,7 @@ public class EmailToken {
     )
     private User user;
 
-    public EmailToken(String token, LocalDateTime createdAt, LocalDateTime expiresAt, User user) {
+    public EmailToken(String token, Instant createdAt, Instant expiresAt, User user) {
         this.token = token;
         this.createdAt = createdAt;
         this.expiresAt = expiresAt;

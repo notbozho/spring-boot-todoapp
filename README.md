@@ -23,8 +23,11 @@ Basic Todo App backend made with Spring Boot 3.0 and MySQL.
 
 ## Todo
  * Unit Testing
+ * Fix route permissions
  * ~~Email Verification for registration~~
- * Password reset route
+ * ~~Password reset route~~
+ * 2fa for login
+ * Make auth service doesnt access the user repository directly
  * ~~Use template engine for email templates instead of hard coded html strings~~
  * i18n localization
  * Documentation with Swagger and Javadoc

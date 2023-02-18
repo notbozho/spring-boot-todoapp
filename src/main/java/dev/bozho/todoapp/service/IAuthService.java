@@ -14,4 +14,8 @@ public interface IAuthService {
     ResponseEntity<?> refreshToken(String token);
 
     ResponseEntity<?> logout(String token);
+
+    ResponseEntity<?> resetPassword(String email) throws UserException, TokenException;
+
+    ResponseEntity<?> changePassword(String token, String password) throws UserException, TokenException;
 }

@@ -8,8 +8,8 @@ import dev.bozho.todoapp.payload.TaskDTO;
 import dev.bozho.todoapp.payload.UserDTO;
 import dev.bozho.todoapp.repository.UserRepository;
 import dev.bozho.todoapp.service.impl.EmailService;
-import dev.bozho.todoapp.service.impl.EmailTokenService;
 import dev.bozho.todoapp.service.impl.UserService;
+import dev.bozho.todoapp.service.tokens.EmailTokenService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -56,7 +56,7 @@ public class UserController {
     public ResponseEntity<List<TaskDTO>> getTasks() throws TaskException {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        List<TaskDTO> tasks = userService.getTasks(user.getEmail());
+        List<TaskDTO> tasks = userService.getTasks();
 
         return new ResponseEntity<List<TaskDTO>>(tasks, HttpStatus.OK);
     }
