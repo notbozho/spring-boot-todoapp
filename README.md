@@ -17,9 +17,13 @@ Basic Todo App backend made with Spring Boot 3.0 and MySQL.
 * MySQL
 
 ## Routes
-* POST /api/v1/auth/register - Register a new user
-* POST /api/v1/auth/login - Login a user
-* POST /api/v1/auth/refresh - Refresh Access token
+* **POST** `/api/v1/auth/register` - Register a new user
+* **POST** `/api/v1/auth/login` - Login a user
+* **POST** `/api/v1/auth/refresh` - Refresh Access token
+* **POST** `/api/v1/auth/logout` - Logout a user
+* **GET** `/api/v1/user/confirm` - Confirm user email
+* **POST** `/api/v1/auth/resetpassword` - Request a password reset.
+* **POST** `/api/v1/auth/changepassword` - Reset password with token.
 
 ## Todo
  * Unit Testing
